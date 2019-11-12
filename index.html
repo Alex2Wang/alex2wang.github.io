@@ -1,57 +1,632 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
-<title>alex2wang</title>
-<meta name="referrer" content="never">
-<!--html5Ĭ������-->
-<link rel="stylesheet" href="css/normalize.css">
-
-<!--css3��Ҫ��ʽ-->
-<link rel="stylesheet" href="css/style.css" media="screen" type="text/css" />
+<!-- *********
+说明:自定义上传壁纸,并BASE64保存localstorage
+******** -->
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<meta name="referrer" content="never" />
+		<base href="" target="_blank" />
+		<title>ezso-超简洁de搜索</title>
+		<!-- 	html5shiv -->
+		<script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
+		<!-- normalize.css -->
+		<link href="https://cdn.bootcss.com/normalize/8.0.1/normalize.css" rel="stylesheet">
 		<style type="text/css">
-		*{
-			box-sizing: border-box;
-			outline: none;
-		}
-			body{
+			*{
+			   margin: 0;
+			   padding: 0;
+			   box-sizing: border-box;
+			       /*  取消 苹果浏览器自带样式,比如小号的输入框
+			   */
+			       -webkit-appearance : none ;
+
+			   }
+			body {		
+				background:rgba(3, 169, 244, 0.25) url("https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/super/crop%3D20%2C0%2C345%2C216/sign=c76bf26af71986185508b5c477df1e5f/f9dcd100baa1cd1106fb052bb612c8fcc3ce2d6f.jpg") no-repeat top;
+				background-size: cover;
+				min-height: 950px;
+			}
+			.bdr{
+				border: 1px solid red;
+			}
+			.pink{
+				background-color: pink;
+			}
+			
+			.header{
 				width: 100%;
-				min-height: 980px;
-				background:#D1D1D1 url(https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy/super/crop=19,0,345,216/sign=aca9ea36c63d70cf58b5f04dc5ede82c/a044ad345982b2b7033581cb3eadcbef76099b13.jpg) no-repeat left;
-			    background-size: cover;
-			
-			}
-			
-			.search-cotainer{
-				position: fixed;
-				top: 45%;
-				left: 45%;
-				opacity: 0.7;
-			}
-			.search-cotainer .search {
-				height: 40px;
-				border: 0;
-				border-radius: 20px;
-			}
-			.search-cotainer .submit {
-				height: 40px;
-				width:40px ;
-				border: 0;
-				border-radius: 50%;
+				height: 30px;
+				background-color: rgba(15,25,50,.3);
 				position: relative;
-				right: 45px;
+				
+			}
+			.header-svg-icon{
+			 height: 20px;
+			 /* fill:#FFF; */
+			 fill: currentColor;
+			 
+			}
+			.header-svg-icon:hover{
+			 height: 20px;
+			 fill:rgb(47, 255, 44);
+		
+			 
+			}	
+			.menu-btn{
+				border: none;
+				background: transparent;
+				width:100px ;
+				height: 20px;
+				margin: 5px;
+				outline: none;
+				position: absolute;
+				right: 1px;
+				color: #FFFFFF;
+			}
+
+            /* 背景皮肤设置 */
+			.skin-list-container{
+				width: 100%;
+				height: auto;
+				position: fixed;
+				top: 0;
+				left: 0;
+				display: none;
+				background-color: rgba(55,167,215,0.7);
 			}
 			
+			.skin-list-container ul{
+				width: 100%;
+				text-align: center;
+			}
+			.skin-li{
+				width: 10%;
+				display: inline-block;
+				position: relative;
+			}
+			.skin-li img{
+				display: block;
+				width: 100%;
+				height: 100px;
+			}
+			.skin-li .skin-title{
+				display: none;
+			}
+			.skin-li:hover .skin-title{
+				display: block;
+				width: 100%;
+				height: 20px;
+				position: absolute;
+				bottom: 0;
+				left:0;
+				color: white;
+				font-size: 15px;
+				line-height: 20px;
+				text-align: center;
+				overflow: hidden;
+				background-color: black;
+				opacity: 0.5;
+			}
+			.close-skin-list{
+				display: none;
+				transition: all 3s ease;
+			}
+			.open-skin-list{
+				display: block;		
+			}
+			.close_skinlist_btn{
+				background: red;
+				width: 24px;
+				height: 24px;
+				border-radius: 12px;
+				border: 0;
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				color: white;
+			}
+			
+
+			.mask-skin-bottom{
+				width: 100%;
+				height: 1000px;
+				background-color: rgba(2, 2, 2, 0.12);
+				
+			}
+			.skin-btn {
+				border: none;
+				background: transparent;
+				width:100px ;
+				height: 22px;
+				margin: 5px;
+				outline: none;
+				position: absolute;
+				left: 1px;
+				color: #FFFFFF;
+				
+			}
+			.upload-bg{
+				margin-left: 150px;
+			}
+			#set_local_img{
+				margin-left: -120px;
+			}
+			/* 搜索框 */
+			.search-container{
+				margin-top: 150px;
+				text-align: center;
+			}
+			.search-container form{
+				display: inline-block;
+				width: auto;
+				height:50px ;
+  			    border-radius: 30px ;
+				background-color: #ffffff;
+			}
+			.search-container .search-input{
+				width: 150px;
+				height:50px ;
+				background-color: transparent;
+				border: 0;
+				margin-left: 20px;
+				outline: none;
+				box-sizing: border-box;
+				vertical-align: top;
+				
+			}
+			.search-container .search-input:focus{
+					width: 300px;
+			}
+			.search-container .search-btn{
+				width: 48px;
+				height:48px;
+				border-radius:24px ;
+				background-color: rgba(20, 136, 255, 0.58);
+				border: 0;
+				outline: none;
+				box-sizing: border-box;
+				vertical-align: bottom;
+				margin-bottom:1px ;
+				color: blue;
+			}
+			.search-container .search-btn:hover{
+				width: 96px;
+				height:48px;
+				border-radius:24px ;
+				background-color: rgb(47, 255, 44);
+
+			}
+			.svg_icon {
+			    fill: currentColor;
+				
+			}
+			.search-btn svg{
+				width: 35px;
+				height: 35px;
+			}
+
+/*         main 中间部分*/  
+        .main{
+			  min-height: 600px;
+		  }
+	    .footer{
+			  color: gray;
+			  text-align: center;
+		  }
+
+	/* PC端 */
+	@media screen and (min-width: 600px) {	
+		.mb_bg_ul{
+			display: none;
+		}
+		.mb-hr{
+			display: none;
+		}
+	} 	  
+	/* 移动端 */
+	@media screen and (max-width: 600px) {
+	body {	
+		background:rgba(3, 169, 244, 0.25) url("http://d.hiphotos.baidu.com/image/pic/item/a9d3fd1f4134970a23c3be8e92cad1c8a6865dda.jpg") no-repeat top;
+		background-size: cover;
+		min-height: 800px;
+	}
+
+	.search-container{
+		margin-top: 100px;
+		text-align: center;
+	}
+	.search-container form{
+		display: inline-block;
+		width: auto;
+		height:50px ;
+		border-radius: 30px ;
+		background-color: #ffffff;
+	}
+	.pc_bg_ul{
+		display: none;
+	}
+	.upload-bg{
+		margin-left: 5px;
+	}
+
+	#set_local_img{
+		margin-left: 5px;
+	}
+    
+
+}
+/* media end */
+
 		</style>
-</head>
-<body>
-<section class="search-cotainer">
-	<form action="http://www.baidu.com/s" method="get" target="_blank">		    
-		<input type="search" placeholder="just search!" name="wd" class="search">		    	
-		<input type="submit" value="搜索" class="submit">
-	</form>
+	</head>
+	<body>
+		<div class="page">
+		
+			
+			<header class="header">
+			<button type="button" class="skin-btn" title="设置壁纸">
+	     <svg class="header-svg-icon"  t="1573198027737" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2949"><path d="M515.2 67.2c-246.4 0-448 201.6-448 448s201.6 448 448 448 448-201.6 448-448-198.4-448-448-448z m233.6 396.8c-16 16-32 28.8-48 44.8-6.4 6.4-12.8 16-22.4 16-12.8 3.2-22.4-6.4-28.8-12.8-3.2-3.2-3.2-6.4-6.4-6.4v208c0 6.4-3.2 9.6-6.4 12.8-9.6 6.4-25.6 6.4-41.6 6.4h-160c-12.8 0-22.4 0-32-3.2-3.2-3.2-6.4-6.4-9.6-12.8v-211.2c-6.4 6.4-12.8 12.8-22.4 16-6.4 3.2-16 0-22.4-3.2l-9.6-9.6c-6.4-6.4-12.8-12.8-22.4-19.2l-9.6-9.6-12.8-12.8c-3.2-6.4-9.6-9.6-12.8-16 0-3.2-3.2-6.4-3.2-12.8 3.2-9.6 9.6-16 16-22.4l12.8-12.8 67.2-64c3.2-3.2 6.4-9.6 12.8-12.8 6.4-6.4 9.6-16 22.4-16h41.6c3.2 3.2 6.4 3.2 9.6 6.4l9.6 9.6c3.2 6.4 9.6 9.6 16 12.8 6.4 3.2 16 6.4 22.4 6.4h22.4c16-3.2 25.6-6.4 35.2-16 3.2-3.2 6.4-9.6 9.6-12.8 3.2-3.2 3.2-3.2 6.4-3.2s3.2 0 6.4-3.2h12.8c9.6 0 28.8-3.2 35.2 3.2 6.4 3.2 9.6 6.4 12.8 12.8l16 16c19.2 19.2 38.4 35.2 57.6 54.4l19.2 19.2c3.2 6.4 9.6 9.6 12.8 16v3.2c3.2 16 0 22.4-6.4 28.8z"  p-id="2950"></path></svg>
+				</button>
+				
+			
+			<button type="button" class="menu-btn" title="设置菜单">
+				<svg class="header-svg-icon" t="1573197945268"  viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1191"><path d="M937.06199 621.688013 1024 621.688013 1024 402.25 937.062001 402.25C848.873994 402.25 827.874007 351.312041 890.062039 289.061955L951.623997 227.499997 796.435978 72.374032 734.935972 133.874038C672.623933 196.186077 621.623921 175.062083 621.809981 86.998083 621.809981 86.748125 621.684029 86.62207 621.684029 86.436112L621.684029 0 402.344 0 402.344 87.25C402.094042 175.125993 351.282035 196.125981 289.061952 133.875997L227.529997 72.37599 72.406016 227.500032 133.906022 289.06199C196.188058 351.311974 175.062016 402.250035 87.030067 402.250035L0 402.250035 0 621.688033 87.032 621.688033C175.064051 621.688033 196.188045 672.625992 133.907955 734.93803L72.407949 796.438036 227.533914 951.626056 289.065869 890.064097C351.283904 827.876065 402.097856 848.876052 402.347917 936.690094L402.347917 1024 621.691919 1024 621.691919 937.561999C621.691919 937.373993 621.817866 937.185987 621.817866 937.000028 621.629865 848.938076 672.629878 827.873987 734.943862 890.062019L796.443868 951.623977 951.631882 796.435958 890.069924 734.935951C827.876045 672.625971 848.876032 621.688013 937.06199 621.688013L937.06199 621.688013ZM512 704C405.967974 704 320 617.999974 320 512 320 406.000026 405.967974 320 512 320 617.999974 320 704 406.000026 704 512 704 617.999974 617.999974 704 512 704L512 704Z" p-id="1192" ></path></svg>
+				
+			</button>	
+				
+				
+			</header>
+			<!-- main -->
+			<section class="main">
+				<!-- search -->
+				<div class="search-container ">
+					<form action="https://www.baidu.com/s" method="get" class="sform">
+						<input type="search" name="wd"  value="" placeholder="搜索词 + Enter" class="search-input"/>
+						<button type="submit" class="search-btn">
+						 <svg class="svg_icon svg_icon_search" viewBox="0 0 18 18" width="18" height="18"><path d="M4.5 4.5c-1.9 1.9-1.9 5.1 0 7.1s5.1 1.9 7.1 0 1.9-5.1 0-7.1-5.2-2-7.1 0zm10.8 12.2l-3.1-3.1c-2.7 2-6.6 1.9-9.1-.6C.3 10.2.3 5.8 3 3 5.7.3 10.2.3 12.9 3c2.5 2.5 2.7 6.4.6 9.1l3.1 3.1c.4.4.4 1 0 1.4-.3.5-.9.5-1.3.1z" fill="currentColor"></path></svg>
+						 </button>
+					</form>
+				</div>
+				<!-- search end -->
+	
+			</section>
+			<footer class="footer" title="ezso-超简洁de搜索">
+				<div class="about" >
+					ezso-超简洁de搜索
+				</div>
+				<div class="about" >
+					Copyright © 2019 alex2wang
+				</div>
+			</footer>
+			
+			<div class="skin-list-container">
+				<!-- 自定义上传壁纸,并BASE64保存localstorage -->
+				<div class="upload-bg">
+					本地壁纸设置:<input type="file" id="upload_img" accept="image/*" />
+					<hr class="mb-hr" >
+					<button type="button" id="set_local_img">确定</button>
+				</div>
+				
+				<!-- pc端壁纸 -->
+				<ul class="pc_bg_ul">
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			       <!-- 9张 -->
+				   <li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+				   <!-- 9张 -->
 
-</section>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<!-- 9张 -->
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<!-- 9张 -->
+			<!-- 9张 -->
+<!-- 			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+			<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li> -->
+			<!-- 9张 -->
+				</ul>
+				<!-- 手机端壁纸 -->
+				<ul class="mb_bg_ul">
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+					<li class="skin-li"><img  src="#" ><span class="skin-title"></span></li>
+				   <!-- 9张 -->
+				</ul>   
+				<button type="button" class="close_skinlist_btn" >X</button>
+				 
+				<!-- 下半部分遮罩,点击关闭 -->
+				<div class="mask-skin-bottom"></div>
+			</div>
+			
+			
+		</div>
+		<!-- page end -->
+		
+		<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			//手机搜索
+			var clientWidth=document.body.clientWidth;
+				 if(clientWidth <600){
+					 var sfrom=document.querySelector('.sform');
+					 sfrom.action="https://m.baidu.com/s"
+				 }
+			//本地存储的壁纸url
+			var localBg=localStorage.getItem("backgroundImageUrl");
+			if(localBg){
+				document.body.style.backgroundImage="url("+localBg+")";
+			}else{
+				 //alert("温馨提示: 点击左上角,可以设置壁纸!");
+			}
+			//本地设置壁纸
+				var upimg =document.querySelector("#upload_img");
+				var set_local_img =document.querySelector("#set_local_img");
+				
+				set_local_img.onclick=function(){
+					read_imgs(upimg);
+				};
+			//FileReader 读取本地上传图片
+			  function read_imgs(source){
+			  	for(var i=0;i<source.files.length;i++){
+			       if(window.FileReader) {
+				     var fr = new FileReader();
+				   }
+					fr.readAsDataURL(source.files[i]);
+					fr.onloadend = function(e) {
+					var base64img=e.target.result;
+					console.log("base64 本地图片");
+					document.body.style.backgroundImage="url("+base64img+")";
+					localStorage.setItem("backgroundImageUrl",base64img);
+			         };
+			    }
+			}
+			
+			
+			
+			var skinContainer=document.querySelector('.skin-list-container');
+			
+			//点击更换背景
+			skinContainer.addEventListener('click',function (event) {	    
+			        if(event.target.nodeName.toLowerCase()=="img"){
+						document.body.style.backgroundImage="url("+event.target.src+")";
+						localStorage.setItem("backgroundImageUrl",event.target.src);
+					}
+			});
+			//关闭背景设置面板
+			var close_skinlist_btn = document.querySelector('.close_skinlist_btn');
+			close_skinlist_btn.onclick=function(){
+				skinContainer.className='skin-list-container close-skin-list';
+			}
+			//用下半部分遮罩关闭面板
+			var mask_skin_bottom = document.querySelector('.mask-skin-bottom');
+			    mask_skin_bottom.onclick=function(){
+				skinContainer.className='skin-list-container close-skin-list';
+			}
+			//打开背景设置面板
+			var skin_btn = document.querySelector('.skin-btn');
+			skin_btn.onclick=function(){
+				skinContainer.className ='skin-list-container open-skin-list';
+				var  bg_json= document.querySelector('#bg_json').innerHTML;
+				var bgList= JSON.parse(bg_json);
+				var  skinUl=document.querySelectorAll('.skin-li img');
+				var  skinTitleUl=document.querySelectorAll('.skin-title');
+				for(let i=0;i<skinUl.length;i++){
+					if(!bgList[i].url){break}
+			      skinUl[i].src=bgList[i].url;
+				  skinTitleUl[i].innerText=bgList[i].title;
+				}
+			}
 
-</body>
+		</script>
+		<!-- 壁纸json -->
+		<script type="text/json" id="bg_json">
+			[  
+				{
+					"url": "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C0%2C1920%2C1200/sign=bb2c4315ae8b87d6440df15f3a380408/50da81cb39dbb6fd5a5614020624ab18972b3780.jpg",
+					"type":"pc/mb","title": "磨砂沙滩比基尼"
+				},
+				{
+					"url": "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/super/crop=5,2,1268,792/sign=40cc6cdbb4a1cd1111f928608427e4ce/55e736d12f2eb9382340f219db628535e5dd6f28.jpg",
+					"type":"pc/mb","title": "沙滩比基尼"
+				},
+				{
+					"url": "https://ss0.baidu.com/94o3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C0%2C1913%2C1193/sign=86fed7b8f8246b606f41e834d6c8367c/8326cffc1e178a8281f6f64bf803738da877e817.jpg",
+					"type":"pc/mb","title": " 沙滩 橘色比基尼"
+				},
+				{
+					"url": "https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy/super/crop=0,0,1920,1200/sign=1f7075213cfa828bc56cc7a3c02f6d04/caef76094b36acaf8d9367d873d98d1001e99ca7.jpg",
+					"type":"pc/mb","title": "玻璃磨砂 海边比基尼"
+				},
+				
+				{
+					"url": "https://ss3.baidu.com/-fo3dSag_xI4khGko9WTAnF6hhy/super/crop=156,0,1800,1125/sign=93c54721eadde711f39d19b69adefb2d/a08b87d6277f9e2f41afea2c1030e924b899f378.jpg",
+					"type":"pc/mb","title": "苹果壁纸沙漠"
+				},
+
+				{
+					"url": "https://img01.sogoucdn.com/app/a/100520021/e25a195147794c6f416b067b70e292fa",
+					"type":"pc/mb","title": "灰蒙蒙 湖泊"
+				},
+				{
+					"url": "https://img01.sogoucdn.com/app/a/100520021/cf6f58c00c43e91dd0c9b6c58e8d8f24",
+					"type":"pc/mb","title": "清晨山脉"
+				},
+				{
+					"url": "https://img01.sogoucdn.com/app/a/100520021/b8b32170120b15c76715c04505da5db8",
+					"type":"pc/mb","title": "阳光山谷 湖泊"
+				},
+				{
+					"url": "https://img02.sogoucdn.com/app/a/100520021/d811c6acea00d46c4927dec0c39d202a",
+					"type":"pc/mb","title": "公路 大山"
+				},
+				{
+					"url": "https://img03.sogoucdn.com/app/a/100520021/fbe8715a39dbf2d4ece917e0d60b3d21",
+					"type":"pc/mb","title": "蓝色湖泊"
+				},
+				{
+					"url": "https://img02.sogoucdn.com/app/a/100520021/67a044b476845c3273c5dab9919e8d4a",
+					"type":"pc/mb","title": "夜色山脉"
+				},
+				{
+					"url": "https://ss3.baidu.com/9fo3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C0%2C1680%2C1050/sign=3c47666f44ed2e73e8a6dc6cba318dbb/a5c27d1ed21b0ef411e811b5d3c451da80cb3edc.jpg",
+					"type":"pc/mb","title": "星空 阿尔卑斯山"
+				},
+
+
+				{
+					"url": "https://ss1.baidu.com/9vo3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C141%2C2000%2C1250/sign=4cbbff2635f33a878a225a5afb6c3c09/72f082025aafa40fd279b2cba464034f78f0196c.jpg",
+					"type":"pc/mb","title": "白衣美女 希腊海边"
+				},
+
+				{
+					"url": "https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C0%2C1817%2C1135/sign=483e9616a151f3ded7fde324a9dedc2f/eaf81a4c510fd9f902020bb52b2dd42a2934a4d1.jpg",
+					"type":"pc/mb","title": "优胜美地 湖泊"
+				},
+				{
+					"url": "https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C64%2C1024%2C640/sign=586e76491a3853439880dd61ae239c48/0bd162d9f2d3572c7c9b19f98013632762d0c39e.jpg",
+					"type":"pc/mb","title": "欧美 一排足球宝贝"
+				},
+				{
+					"url": "https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C25%2C1500%2C937/sign=340ec9f95ee736d14c5cd648a66063f0/bf096b63f6246b6080333551e1f81a4c510fa2d2.jpg",
+					"type":"pc/mb","title": "黑色兰博基尼 美女"
+				},
+
+				{
+					"url": "https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C0%2C1920%2C1200/sign=1f7075213cfa828bc56cc7a3c02f6d04/caef76094b36acaf8d9367d873d98d1001e99ca7.jpg",
+					"type":"pc/mb","title": "油画风 沙滩比基尼"
+				},
+				{
+					"url": "http://wx4.sinaimg.cn/large/a9061e6fgy1fgamn4u2nhj229s1ilkdx.jpg",
+					"type":"pc/mb","title": "黄叶 湖泊"
+				},
+
+				{
+					"url": "https://cn.bing.com/sa/simg/hpb/LaDigue_EN-CA1115245085_1920x1080.jpg",
+					"type":"pc/mb","title": "海边 椰子树"
+				},
+				{
+					"url": "https://s2.best-wallpaper.net/wallpaper/1920x1200/1401/Mountain-peaks-trees-snow-winter-morning_1920x1200.jpg",
+					"type":"pc/mb","title": "冬天 白云山"
+				},
+				{
+					"url": "https://s2.best-wallpaper.net/wallpaper/3840x2160/1901/White-world-trees-snow-winter_3840x2160.jpg",
+					"type":"pc/mb","title": "雪地"
+				},
+				{
+					"url": "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BBUpVFY.img",
+					"type":"pc/mb","title": "湖泊 冬天"
+				},
+
+				{
+					"url": "http://h.hiphotos.baidu.com/image/pic/item/b999a9014c086e065a5bc0420c087bf40bd1cbcc.jpg",
+					"type":"pc/mb","title": "蓝色跑车"
+				},
+				{
+					"url": "http://e.hiphotos.baidu.com/image/pic/item/64380cd7912397dd6d2a35425e82b2b7d0a28721.jpg",
+					"type":"pc/mb","title": "胡杨林"
+				},
+
+				{
+					"url": "http://b.hiphotos.baidu.com/image/pic/item/4e4a20a4462309f7c99943117a0e0cf3d7cad63b.jpg",
+					"type":"pc/mb","title": "蓝色湖光山色"
+				},
+				{
+					"url": "https://ss1.baidu.com/-4o3dSag_xI4khGko9WTAnF6hhy/super/crop%3D20%2C0%2C345%2C216/sign=c76bf26af71986185508b5c477df1e5f/f9dcd100baa1cd1106fb052bb612c8fcc3ce2d6f.jpg",
+					"type":"pc/mb","title": "gif 两个美女"
+				},
+				{
+					"url": "https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy/super/crop%3D0%2C208%2C500%2C312/sign=d0f3e5d63601213fdb7c149c69d71ae3/500fd9f9d72a605978ce30152734349b023bbae7.jpg",
+					"type":"pc/mb","title": "gif 万花筒"
+				},
+
+				{
+					"url": "https://b-ssl.duitang.com/uploads/item/201703/16/20170316152151_LFVie.thumb.700_0.gif",
+					"type":"pc/mb","title": "gif 飘雪"
+				},
+				{
+					"url": "http://c.hiphotos.baidu.com/image/pic/item/314e251f95cad1c80da1c87f713e6709c93d514b.jpg",
+					"type":"pc/mb","title": "gif 黑色芭蕾舞"
+				},
+				{
+					"url": "http://d.hiphotos.baidu.com/image/pic/item/a9d3fd1f4134970a23c3be8e92cad1c8a6865dda.jpg",
+					"type":"pc/mb","title": "gif 旋转 地球"
+				},
+				{
+					"url": "https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy/super/crop%3D56%2C0%2C341%2C212/sign=f93104fbe5c4b74520dbed56f2c9283b/960a304e251f95ca22ac1064c7177f3e66095283.jpg",
+					"type":"pc/mb","title": "gif 洛丽塔亲吻玻璃"
+				},
+				{
+					"url": "https://ss0.baidu.com/7Po3dSag_xI4khGko9WTAnF6hhy/super/crop%3D41%2C0%2C358%2C223/sign=239a0aee3dfa828bc56cc7a3c02b7018/9213b07eca80653893732af899dda144ac348244.jpg",
+					"type":"pc/mb","title": "gif 白衣美女 顶胸"
+				},
+				{
+					"url": "https://ss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy/super/crop%3D106%2C3%2C332%2C207/sign=2e85f4912ea446236a85ff22a5134238/b21bb051f819861875dd616f44ed2e738ad4e647.jpg",
+					"type":"pc/mb","title": "gif 白猫"
+				},
+
+				{
+					"url": "http://g.hiphotos.baidu.com/image/pic/item/8c1001e93901213f7665d37d53e736d12f2e9539.jpg",
+					"type":"pc/mb","title": "超能查派 画画"
+				},
+				{
+					"url": "http://d.hiphotos.baidu.com/image/pic/item/b8014a90f603738de2599410bd1bb051f819ecf5.jpg",
+					"type":"pc/mb","title": "工笔画 美人"
+				},
+				{
+					"url": "http://b.hiphotos.baidu.com/image/pic/item/ac6eddc451da81cb308e74c45c66d0160924314a.jpg",
+					"type":"pc/mb","title": "重庆大礼堂"
+				},
+				{
+					"url": "",
+					"type":"pc/mb","title": "end"
+				}
+			]
+		</script>
+
+	</body>
 </html>
